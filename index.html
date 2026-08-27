@@ -13,6 +13,19 @@
     <!-- KaTeX CDN for rendering mathematical formulas -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script>
+        function renderMath() {
+            if (window.renderMathInElement) {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+    </script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMath()"></script>
     
     <!-- Google Fonts: Prompt & Sarabun -->
@@ -52,13 +65,9 @@
         .math-box {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
         }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-        }
         /* KaTeX typography adjustments for dark container */
         .math-box .katex {
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             color: #f8fafc;
         }
         ::-webkit-scrollbar {
@@ -74,6 +83,18 @@
         }
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
+        }
+        @media print {
+            header, nav, button, .no-print {
+                display: none !important;
+            }
+            body {
+                background: white;
+                color: black;
+            }
+            .tab-content {
+                display: block !important;
+            }
         }
     </style>
 </head>
@@ -107,10 +128,10 @@
                     <i class="fa-solid fa-diagram-project"></i> 2. ตัวอย่างที่ 1 - 4
                 </button>
                 <button onclick="switchTab('homework')" id="tab-homework" class="tab-btn px-4 py-2.5 rounded-lg transition-all flex items-center gap-2 whitespace-nowrap text-slate-300 hover:text-white hover:bg-slate-800">
-                    <i class="fa-solid fa-pen-to-square"></i> 3. การบ้าน ข้อ 1 (HW13)
+                    <i class="fa-solid fa-pen-to-square"></i> 3. การบ้าน ข้อ 1 (HW13 - Dynamic Solver)
                 </button>
                 <button onclick="switchTab('calculator')" id="tab-calculator" class="tab-btn px-4 py-2.5 rounded-lg transition-all flex items-center gap-2 whitespace-nowrap text-slate-300 hover:text-white hover:bg-slate-800">
-                    <i class="fa-solid fa-calculator"></i> 4. เครื่องมือคำนวณ PERT
+                    <i class="fa-solid fa-calculator"></i> 4. เครื่องมือคำนวณ PERT Sandbox
                 </button>
             </div>
         </div>
@@ -288,17 +309,17 @@
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center text-xs">
                     <div class="p-3 bg-slate-100 rounded-lg">
                         <div class="font-bold text-slate-800 text-sm">ช่วง Z ระหว่าง -1 ถึง +1</div>
-                        <div class="text-sau-600 font-bold text-lg">68%</div>
+                        <div class="text-sau-600 font-bold text-lg">68.27%</div>
                         <div class="text-slate-500">ของโอกาสความสำเร็จ</div>
                     </div>
                     <div class="p-3 bg-slate-100 rounded-lg">
                         <div class="font-bold text-slate-800 text-sm">ช่วง Z ระหว่าง -2 ถึง +2</div>
-                        <div class="text-sau-600 font-bold text-lg">95%</div>
+                        <div class="text-sau-600 font-bold text-lg">95.45%</div>
                         <div class="text-slate-500">ของโอกาสความสำเร็จ</div>
                     </div>
                     <div class="p-3 bg-slate-100 rounded-lg">
                         <div class="font-bold text-slate-800 text-sm">ช่วง Z ระหว่าง -3 ถึง +3</div>
-                        <div class="text-sau-600 font-bold text-lg">98%</div>
+                        <div class="text-sau-600 font-bold text-lg">99.73%</div>
                         <div class="text-slate-500">ของโอกาสความสำเร็จ</div>
                     </div>
                 </div>
@@ -330,7 +351,7 @@
                         <div>$$T_e = \frac{a + 4m + b}{6}$$</div>
                         <div>$$T_e = \frac{4 + (4 \times 5) + 9}{6} = \frac{33}{6}$$</div>
                         <div class="text-amber-400 font-bold text-base text-center bg-slate-950/80 p-2 rounded-lg border border-slate-800">
-                            $$T_e = 5.5 \text{ วัน} \approx 5.83 \text{ วัน}$$
+                            $$T_e = 5.5 \text{ วัน}$$
                         </div>
                     </div>
                 </div>
@@ -554,7 +575,7 @@
                             </div>
                         </div>
                         <p class="text-xs text-slate-400">
-                            <b>สรุป:</b> มีโอกาสที่จะทำงานให้เสร็จได้ภายใน 42 วันเพียง <b>1.04%</b> เท่านั้น (แทบเป็นไปไม่ได้)
+                            <b>สรุป:</b> มีโอกาสที่จะทำงานให้เสร็จได้ภายใน 42 วันเพียง <b>1.04%</b> เท่านั้น
                         </p>
                     </div>
 
@@ -571,116 +592,72 @@
                             </div>
                         </div>
                         <p class="text-xs text-slate-400">
-                            <b>สรุป:</b> หากต้องการความมั่นใจสูงถึง 90% ว่าโครงการจะเสร็จทัน ต้องกำหนดระยะเวลา <b>48 วัน</b>
+                            <b>สรุป:</b> หากต้องการความมั่นใจสูงถึง 90% ต้องกำหนดระยะเวลา <b>48 วัน</b>
                         </p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- TAB 3: HOMEWORK NO. 13 (ข้อ 1) -->
+        <!-- TAB 3: HOMEWORK NO. 13 (DYNAMIC INTERACTIVE SOLVER) -->
         <section id="section-homework" class="tab-content hidden space-y-8">
             <!-- Header Homework Banner -->
             <div class="bg-gradient-to-r from-sau-900 via-rose-900 to-navy-900 rounded-2xl p-6 text-white shadow-xl flex flex-wrap items-center justify-between gap-4">
                 <div>
                     <span class="bg-sau-500 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
-                        Home Work No.13
+                        Home Work No.13 - Dynamic Live Engine
                     </span>
-                    <h2 class="text-2xl font-bold mt-1">การบ้าน ข้อ 1: การคำนวณและวิเคราะห์ PERT แบบสมบูรณ์</h2>
-                    <p class="text-slate-300 text-xs sm:text-sm mt-1">เฉลยพร้อมการแสดงวิธีทำอย่างเป็นขั้นตอนและกราฟโครงข่าย</p>
+                    <h2 class="text-2xl font-bold mt-1">การบ้าน ข้อ 1: การคำนวณและวิเคราะห์ PERT (แบบปรับเปลี่ยนตัวเลขได้)</h2>
+                    <p class="text-slate-300 text-xs sm:text-sm mt-1">แก้ไขตัวเลขในตารางเพื่อระบบจะคำนวณหาค่า $T_e$, ES, EF, LS, LF, Slack, SD, Variance, Critical Path และ Probability ให้แบบอัตโนมัติ!</p>
                 </div>
-                <button onclick="window.print()" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-sm font-medium border border-white/20 transition-all flex items-center gap-2">
-                    <i class="fa-solid fa-print"></i> พิมพ์ / บันทึกเฉลย PDF
-                </button>
+                <div class="flex gap-2 no-print">
+                    <button onclick="resetHwTable()" class="bg-white/10 hover:bg-white/20 text-white px-3 py-2 rounded-xl text-xs font-medium border border-white/20 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-rotate-left"></i> รีเซ็ตค่าเริ่มต้น
+                    </button>
+                    <button onclick="window.print()" class="bg-white text-sau-900 hover:bg-slate-100 px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-md">
+                        <i class="fa-solid fa-print"></i> พิมพ์ / PDF
+                    </button>
+                </div>
             </div>
 
-            <!-- Problem Statement & Data Table -->
+            <!-- Problem Statement & Editable Input Data Table -->
             <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4">
-                <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                    <i class="fa-solid fa-table-list text-sau-600"></i> ตารางข้อมูลจากโจทย์ (เวลาเป็น สัปดาห์)
-                </h3>
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-pen-to-square text-sau-600"></i> ตารางตารางป้อนข้อมูลโจทย์ (แก้ไขตัวเลข $a, m, b$ หรือ Predecessor ได้ที่นี่)
+                    </h3>
+                    <button onclick="addHwRow()" class="no-print bg-sau-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-sau-700 transition-all flex items-center gap-1">
+                        <i class="fa-solid fa-plus"></i> เพิ่มกิจกรรม
+                    </button>
+                </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-center text-sm border-collapse">
+                    <table class="w-full text-center text-sm border-collapse" id="hwInputTable">
                         <thead>
                             <tr class="bg-navy-800 text-white text-xs uppercase">
                                 <th class="p-3 border border-slate-700">กิจกรรม (Activity)</th>
-                                <th class="p-3 border border-slate-700">กิจกรรมที่ต้องทำเสร็จก่อน (Predecessor)</th>
-                                <th class="p-3 border border-slate-700 bg-emerald-900/60">Optimistic Time ($a$)</th>
-                                <th class="p-3 border border-slate-700 bg-amber-900/60">Most Likely Time ($m$)</th>
-                                <th class="p-3 border border-slate-700 bg-rose-900/60">Pessimistic Time ($b$)</th>
+                                <th class="p-3 border border-slate-700">กิจกรรมก่อนหน้า (Predecessor)</th>
+                                <th class="p-3 border border-slate-700 bg-emerald-900/60">Optimistic ($a$)</th>
+                                <th class="p-3 border border-slate-700 bg-amber-900/60">Most Likely ($m$)</th>
+                                <th class="p-3 border border-slate-700 bg-rose-900/60">Pessimistic ($b$)</th>
+                                <th class="p-3 border border-slate-700 no-print">การจัดการ</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-200 font-mono text-slate-800">
-                            <tr class="hover:bg-slate-50">
-                                <td class="p-2.5 font-bold border">A</td>
-                                <td class="p-2.5 border text-slate-400">-</td>
-                                <td class="p-2.5 border bg-emerald-50 text-emerald-800 font-bold">1</td>
-                                <td class="p-2.5 border bg-amber-50 text-amber-800 font-bold">3</td>
-                                <td class="p-2.5 border bg-rose-50 text-rose-800 font-bold">4</td>
-                            </tr>
-                            <tr class="hover:bg-slate-50">
-                                <td class="p-2.5 font-bold border">B</td>
-                                <td class="p-2.5 border text-slate-400">-</td>
-                                <td class="p-2.5 border bg-emerald-50 text-emerald-800 font-bold">3</td>
-                                <td class="p-2.5 border bg-amber-50 text-amber-800 font-bold">4</td>
-                                <td class="p-2.5 border bg-rose-50 text-rose-800 font-bold">7</td>
-                            </tr>
-                            <tr class="hover:bg-slate-50">
-                                <td class="p-2.5 font-bold border">C</td>
-                                <td class="p-2.5 border font-sans">A</td>
-                                <td class="p-2.5 border bg-emerald-50 text-emerald-800 font-bold">2</td>
-                                <td class="p-2.5 border bg-amber-50 text-amber-800 font-bold">3</td>
-                                <td class="p-2.5 border bg-rose-50 text-rose-800 font-bold">6</td>
-                            </tr>
-                            <tr class="hover:bg-slate-50">
-                                <td class="p-2.5 font-bold border">D</td>
-                                <td class="p-2.5 border font-sans">A, C</td>
-                                <td class="p-2.5 border bg-emerald-50 text-emerald-800 font-bold">1</td>
-                                <td class="p-2.5 border bg-amber-50 text-amber-800 font-bold">2</td>
-                                <td class="p-2.5 border bg-rose-50 text-rose-800 font-bold">4</td>
-                            </tr>
-                            <tr class="hover:bg-slate-50">
-                                <td class="p-2.5 font-bold border">E</td>
-                                <td class="p-2.5 border font-sans">B, C</td>
-                                <td class="p-2.5 border bg-emerald-50 text-emerald-800 font-bold">2</td>
-                                <td class="p-2.5 border bg-amber-50 text-amber-800 font-bold">4</td>
-                                <td class="p-2.5 border bg-rose-50 text-rose-800 font-bold">8</td>
-                            </tr>
-                            <tr class="hover:bg-slate-50">
-                                <td class="p-2.5 font-bold border">F</td>
-                                <td class="p-2.5 border font-sans">D</td>
-                                <td class="p-2.5 border bg-emerald-50 text-emerald-800 font-bold">1</td>
-                                <td class="p-2.5 border bg-amber-50 text-amber-800 font-bold">3</td>
-                                <td class="p-2.5 border bg-rose-50 text-rose-800 font-bold">6</td>
-                            </tr>
-                            <tr class="hover:bg-slate-50">
-                                <td class="p-2.5 font-bold border">G</td>
-                                <td class="p-2.5 border font-sans">E</td>
-                                <td class="p-2.5 border bg-emerald-50 text-emerald-800 font-bold">2</td>
-                                <td class="p-2.5 border bg-amber-50 text-amber-800 font-bold">6</td>
-                                <td class="p-2.5 border bg-rose-50 text-rose-800 font-bold">11</td>
-                            </tr>
-                            <tr class="hover:bg-slate-50">
-                                <td class="p-2.5 font-bold border">H</td>
-                                <td class="p-2.5 border font-sans">F, G</td>
-                                <td class="p-2.5 border bg-emerald-50 text-emerald-800 font-bold">2</td>
-                                <td class="p-2.5 border bg-amber-50 text-amber-800 font-bold">3</td>
-                                <td class="p-2.5 border bg-rose-50 text-rose-800 font-bold">7</td>
-                            </tr>
+                        <tbody id="hwInputTbody" class="divide-y divide-slate-200 font-mono text-slate-800">
+                            <!-- Dynamic Editable Input Rows -->
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Solution Part A: Network Diagram (ผังงานโครงข่ายระบบ PERT) -->
+            <!-- Solution Part A: Dynamic Network Diagram (ผังงานโครงข่ายระบบ PERT) -->
             <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4">
                 <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                    <span class="bg-sau-600 text-white w-7 h-7 rounded-lg flex items-center justify-center text-sm">ก</span>
-                    เขียนผังงานโครงข่ายระบบ PERT (PERT Network Diagram)
+                    <span class="bg-sau-600 text-white w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold">ก</span>
+                    ผังงานโครงข่ายระบบ PERT (Dynamic Network Diagram)
                 </h3>
                 <div class="w-full overflow-x-auto bg-slate-900 rounded-xl p-4 border border-slate-800">
-                    <div class="min-w-[800px] h-[360px]" id="hwSvgContainer">
-                        <!-- Homework Network Diagram SVG -->
+                    <div class="min-w-[750px] h-[360px]" id="hwDynamicSvgContainer">
+                        <!-- Dynamic SVG Rendered via JS Engine -->
                     </div>
                 </div>
                 <div class="flex flex-wrap gap-4 text-xs text-slate-600 justify-center">
@@ -689,145 +666,51 @@
                 </div>
             </div>
 
-            <!-- Full Computed Table Homework -->
+            <!-- Solution Output: Full Calculated CPM Table Homework -->
             <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4">
-                <h3 class="text-lg font-bold text-slate-800">
-                    ตารางคำนวณค่าเวลา $T_e$, ES, EF, LS, LF, Slack, $\sigma$ และ Variance ($\sigma^2$)
-                </h3>
+                <div class="flex items-center justify-between border-b pb-3">
+                    <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-table text-sau-600"></i> ตารางแสดงผลการคำนวณแบบสมบูรณ์ ($T_e$, ES, EF, LS, LF, Slack, $\sigma$, $\sigma^2$)
+                    </h3>
+                    <span class="text-xs bg-sau-100 text-sau-700 px-3 py-1 rounded-full font-bold">Auto-Calculated</span>
+                </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-center text-xs sm:text-sm border-collapse">
                         <thead class="bg-slate-100 text-slate-700 font-bold border-b">
                             <tr>
                                 <th class="p-2.5 border">กิจกรรม</th>
-                                <th class="p-2.5 border">$T_e = \frac{a+4m+b}{6}$</th>
+                                <th class="p-2.5 border bg-blue-50 text-blue-900">$T_e = \frac{a+4m+b}{6}$</th>
                                 <th class="p-2.5 border">ES</th>
                                 <th class="p-2.5 border">EF</th>
                                 <th class="p-2.5 border">LS</th>
                                 <th class="p-2.5 border">LF</th>
                                 <th class="p-2.5 border">Slack (LF-EF)</th>
                                 <th class="p-2.5 border">$\sigma = \frac{b-a}{6}$</th>
-                                <th class="p-2.5 border bg-amber-50">Variance ($\sigma^2$)</th>
-                                <th class="p-2.5 border">วิกฤต?</th>
+                                <th class="p-2.5 border bg-amber-50 text-amber-900">Variance ($\sigma^2$)</th>
+                                <th class="p-2.5 border">วิกฤต? (Critical)</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-200 font-mono">
-                            <tr class="bg-rose-50/60 font-semibold">
-                                <td class="p-2.5 border font-sans font-bold">A</td>
-                                <td class="p-2.5 border text-blue-600 font-bold">2.83</td>
-                                <td class="p-2.5 border">0.00</td>
-                                <td class="p-2.5 border">2.83</td>
-                                <td class="p-2.5 border">0.00</td>
-                                <td class="p-2.5 border">2.83</td>
-                                <td class="p-2.5 border text-rose-600 font-bold">0.00</td>
-                                <td class="p-2.5 border">0.50</td>
-                                <td class="p-2.5 border bg-amber-100 font-bold">0.250</td>
-                                <td class="p-2.5 border"><span class="bg-rose-600 text-white px-2 py-0.5 rounded text-xs font-sans">CRITICAL</span></td>
-                            </tr>
-                            <tr>
-                                <td class="p-2.5 border font-sans font-bold">B</td>
-                                <td class="p-2.5 border text-blue-600 font-bold">4.33</td>
-                                <td class="p-2.5 border">0.00</td>
-                                <td class="p-2.5 border">4.33</td>
-                                <td class="p-2.5 border">1.83</td>
-                                <td class="p-2.5 border">6.17</td>
-                                <td class="p-2.5 border text-emerald-600">1.83</td>
-                                <td class="p-2.5 border">0.67</td>
-                                <td class="p-2.5 border">0.444</td>
-                                <td class="p-2.5 border text-slate-400 font-sans">No</td>
-                            </tr>
-                            <tr class="bg-rose-50/60 font-semibold">
-                                <td class="p-2.5 border font-sans font-bold">C</td>
-                                <td class="p-2.5 border text-blue-600 font-bold">3.33</td>
-                                <td class="p-2.5 border">2.83</td>
-                                <td class="p-2.5 border">6.17</td>
-                                <td class="p-2.5 border">2.83</td>
-                                <td class="p-2.5 border">6.17</td>
-                                <td class="p-2.5 border text-rose-600 font-bold">0.00</td>
-                                <td class="p-2.5 border">0.67</td>
-                                <td class="p-2.5 border bg-amber-100 font-bold">0.444</td>
-                                <td class="p-2.5 border"><span class="bg-rose-600 text-white px-2 py-0.5 rounded text-xs font-sans">CRITICAL</span></td>
-                            </tr>
-                            <tr>
-                                <td class="p-2.5 border font-sans font-bold">D</td>
-                                <td class="p-2.5 border text-blue-600 font-bold">2.17</td>
-                                <td class="p-2.5 border">6.17</td>
-                                <td class="p-2.5 border">8.33</td>
-                                <td class="p-2.5 border">11.33</td>
-                                <td class="p-2.5 border">13.50</td>
-                                <td class="p-2.5 border text-emerald-600">5.17</td>
-                                <td class="p-2.5 border">0.50</td>
-                                <td class="p-2.5 border">0.250</td>
-                                <td class="p-2.5 border text-slate-400 font-sans">No</td>
-                            </tr>
-                            <tr class="bg-rose-50/60 font-semibold">
-                                <td class="p-2.5 border font-sans font-bold">E</td>
-                                <td class="p-2.5 border text-blue-600 font-bold">4.33</td>
-                                <td class="p-2.5 border">6.17</td>
-                                <td class="p-2.5 border">10.50</td>
-                                <td class="p-2.5 border">6.17</td>
-                                <td class="p-2.5 border">10.50</td>
-                                <td class="p-2.5 border text-rose-600 font-bold">0.00</td>
-                                <td class="p-2.5 border">1.00</td>
-                                <td class="p-2.5 border bg-amber-100 font-bold">1.000</td>
-                                <td class="p-2.5 border"><span class="bg-rose-600 text-white px-2 py-0.5 rounded text-xs font-sans">CRITICAL</span></td>
-                            </tr>
-                            <tr>
-                                <td class="p-2.5 border font-sans font-bold">F</td>
-                                <td class="p-2.5 border text-blue-600 font-bold">3.17</td>
-                                <td class="p-2.5 border">8.33</td>
-                                <td class="p-2.5 border">11.50</td>
-                                <td class="p-2.5 border">13.50</td>
-                                <td class="p-2.5 border">16.67</td>
-                                <td class="p-2.5 border text-emerald-600">5.17</td>
-                                <td class="p-2.5 border">0.83</td>
-                                <td class="p-2.5 border">0.694</td>
-                                <td class="p-2.5 border text-slate-400 font-sans">No</td>
-                            </tr>
-                            <tr class="bg-rose-50/60 font-semibold">
-                                <td class="p-2.5 border font-sans font-bold">G</td>
-                                <td class="p-2.5 border text-blue-600 font-bold">6.17</td>
-                                <td class="p-2.5 border">10.50</td>
-                                <td class="p-2.5 border">16.67</td>
-                                <td class="p-2.5 border">10.50</td>
-                                <td class="p-2.5 border">16.67</td>
-                                <td class="p-2.5 border text-rose-600 font-bold">0.00</td>
-                                <td class="p-2.5 border">1.50</td>
-                                <td class="p-2.5 border bg-amber-100 font-bold">2.250</td>
-                                <td class="p-2.5 border"><span class="bg-rose-600 text-white px-2 py-0.5 rounded text-xs font-sans">CRITICAL</span></td>
-                            </tr>
-                            <tr class="bg-rose-50/60 font-semibold">
-                                <td class="p-2.5 border font-sans font-bold">H</td>
-                                <td class="p-2.5 border text-blue-600 font-bold">3.50</td>
-                                <td class="p-2.5 border">16.67</td>
-                                <td class="p-2.5 border">20.17</td>
-                                <td class="p-2.5 border">16.67</td>
-                                <td class="p-2.5 border">20.17</td>
-                                <td class="p-2.5 border text-rose-600 font-bold">0.00</td>
-                                <td class="p-2.5 border">0.83</td>
-                                <td class="p-2.5 border bg-amber-100 font-bold">0.694</td>
-                                <td class="p-2.5 border"><span class="bg-rose-600 text-white px-2 py-0.5 rounded text-xs font-sans">CRITICAL</span></td>
-                            </tr>
+                        <tbody id="hwOutputTbody" class="divide-y divide-slate-200 font-mono">
+                            <!-- Calculated Rows inserted dynamically by JS -->
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Solution Parts B, C, D Cards -->
+            <!-- Solution Parts B, C, D Dynamic Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Part B Solution -->
                 <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-3">
                     <span class="bg-sau-600 text-white w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold">ข</span>
                     <h4 class="font-bold text-slate-800">คำนวณหาสายงานวิกฤต (Critical Path)</h4>
                     <div class="text-xs text-slate-600 space-y-2">
-                        <p>พิจารณาความยาวของสายงานทั้งหมด:</p>
-                        <ul class="space-y-1 font-mono">
-                            <li>1. A-C-D-F-H = 15.00 สัปดาห์</li>
-                            <li class="text-rose-600 font-bold">2. A-C-E-G-H = 20.17 สัปดาห์ (ยาวที่สุด)</li>
-                            <li>3. B-E-G-H = 18.33 สัปดาห์</li>
-                        </ul>
-                        <div class="p-3 bg-rose-50 rounded-lg text-rose-800 font-bold text-xs border border-rose-200">
-                            สายงานวิกฤตคือ: A $\rightarrow$ C $\rightarrow$ E $\rightarrow$ G $\rightarrow$ H<br>
-                            เวลารวมโครงการ ($T_e$) = 20.17 สัปดาห์
+                        <p>สายงานวิกฤต (Critical Path) และผลรวม Variance:</p>
+                        <div class="p-3 bg-rose-50 rounded-lg text-rose-800 font-bold text-xs border border-rose-200 space-y-1.5">
+                            <div>สายงานวิกฤต: <span id="hwResPath" class="text-sau-700 font-mono text-sm">A → C → E → G → H</span></div>
+                            <div class="pt-1 border-t border-rose-200">
+                                ผลรวม Variance บนสายงานวิกฤต ($\sum V$):
+                                <div id="hwResVarSum" class="text-amber-800 font-mono text-xs mt-1 bg-amber-50 p-1.5 rounded border border-amber-200">0.250 + 0.444 + 1.000 + 2.250 + 0.694 = <b>4.639</b></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -835,46 +718,68 @@
                 <!-- Part C Solution -->
                 <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-3">
                     <span class="bg-sau-600 text-white w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold">ค</span>
-                    <h4 class="font-bold text-slate-800">คำนวณหาค่าเบี่ยงเบนมาตรฐาน ($\sigma_{Te}$)</h4>
+                    <h4 class="font-bold text-slate-800">ค่าเบี่ยงเบนมาตรฐาน ($\sigma_{Te}$)</h4>
                     <div class="text-xs text-slate-600 space-y-2">
-                        <p>รวมค่า Variance บนสายงานวิกฤต (A, C, E, G, H):</p>
-                        <div class="font-mono bg-slate-100 p-2 rounded text-[11px] text-center">
-                            $$\sum V = 0.25 + 0.444 + 1.000 + 2.250 + 0.694 = 4.639$$
+                        <p>รวมค่า Variance บนสายงานวิกฤต:</p>
+                        <div class="font-mono bg-slate-100 p-2.5 rounded-lg text-xs text-center overflow-x-auto min-h-[42px] flex items-center justify-center" id="hwResVarEquation">
+                            $$\sum V = 4.639$$
                         </div>
-                        <div class="p-3 bg-emerald-50 rounded-lg text-emerald-800 font-bold text-xs border border-emerald-200">
-                            $$\sigma_{Te} = \sqrt{4.639} = 2.154 \text{ สัปดาห์}$$<br>
-                            (เบี่ยงเบนได้ $\pm 2.15$ สัปดาห์)
+                        <div class="p-3 bg-emerald-50 rounded-lg text-emerald-800 font-bold text-xs border border-emerald-200 text-center overflow-x-auto min-h-[48px] flex flex-col justify-center items-center" id="hwResSigmaBox">
+                            $$\sigma_{Te} = \sqrt{\sum V} = \mathbf{2.154}$$
                         </div>
+                        <div class="text-center font-normal text-[11px] text-emerald-700">ค่าเบี่ยงเบนของโครงการ</div>
                     </div>
                 </div>
 
-                <!-- Part D Solution -->
+                <!-- Part D Solution Interactive Controls -->
                 <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-3">
                     <span class="bg-sau-600 text-white w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold">ง</span>
-                    <h4 class="font-bold text-slate-800">เวลาที่โครงการจะเสร็จ โอกาส 85%</h4>
-                    <div class="text-xs text-slate-600 space-y-2">
-                        <p>โอกาสเสร็จ 85% (พื้นที่ $P = 0.8500$):</p>
-                        <div class="text-[11px] bg-slate-100 p-2 rounded text-center">
-                            เปิดตาราง Z Table $\rightarrow Z \approx 1.036$<br>
-                            $$T_s = T_e + (Z \times \sigma_{Te})$$<br>
-                            $$T_s = 20.167 + (1.036 \times 2.154)$$
+                    <h4 class="font-bold text-slate-800">วิเคราะห์ความน่าจะเป็น & เวลาเป้าหมาย</h4>
+                    
+                    <div class="space-y-3 text-xs">
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                            <label class="block font-bold text-slate-700">1. ระบุโอกาสที่ต้องการ (%):</label>
+                            <div class="flex items-center gap-2">
+                                <input type="number" id="hwTargetProbInput" value="85" min="1" max="99.9" oninput="calculateHwTargetTsFromProb()" class="w-full p-2 rounded border border-slate-300 font-mono text-sm text-center font-bold focus:ring-2 focus:ring-sau-500">
+                                <span class="font-bold text-slate-600">%</span>
+                            </div>
+                            <div class="p-2 bg-sau-50 text-sau-800 rounded text-[11px] font-mono border border-sau-200 text-center">
+                                ระยะเวลาที่ต้องการ ($T_s$): <b id="hwResTargetTs" class="text-sau-600 text-sm">22.41</b> สัปดาห์
+                            </div>
                         </div>
-                        <div class="p-3 bg-sau-50 rounded-lg text-sau-800 font-bold text-xs border border-sau-200">
-                            $$T_s = 22.40 \approx 22.41 \text{ สัปดาห์}$$<br>
-                            (ต้องใช้เวลารวมทั้งสิ้นประมาณ 22.4 สัปดาห์)
+
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                            <label class="block font-bold text-slate-700">2. หรือระบุเวลาเป้าหมาย ($T_s$):</label>
+                            <div class="flex items-center gap-2">
+                                <input type="number" id="hwTargetTsInput" value="22.41" step="0.1" oninput="calculateHwProbFromTargetTs()" class="w-full p-2 rounded border border-slate-300 font-mono text-sm text-center font-bold focus:ring-2 focus:ring-sau-500">
+                                <span class="font-bold text-slate-600">สัปดาห์</span>
+                            </div>
+                            <div class="p-2 bg-blue-50 text-blue-900 rounded text-[11px] font-mono border border-blue-200 text-center">
+                                โอกาสที่จะเสร็จทัน: <b id="hwResCalculatedProb" class="text-blue-700 text-sm">85.00%</b> (Z = <span id="hwResCalculatedZ">1.04</span>)
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Dynamic Chart Normal Distribution HW13 -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 space-y-3">
+                <h4 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-chart-line text-sau-600"></i> กราฟความน่าจะเป็น Normal Distribution สำหรับการบ้าน ข้อ 1
+                </h4>
+                <div class="h-64 relative">
+                    <canvas id="hwNormalChart"></canvas>
+                </div>
+            </div>
         </section>
 
-        <!-- TAB 4: INTERACTIVE PERT CALCULATOR -->
+        <!-- TAB 4: INTERACTIVE PERT CALCULATOR SANDBOX -->
         <section id="section-calculator" class="tab-content hidden space-y-8">
             <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-6">
                 <div class="flex flex-wrap items-center justify-between gap-4 border-b pb-4">
                     <div>
-                        <h2 class="text-2xl font-bold text-slate-800">เครื่องมือคำนวณและวิเคราะห์ PERT แบบโต้ตอบ</h2>
-                        <p class="text-sm text-slate-500">ใส่ค่าประมาณเวลา ($a, m, b$) และเป้าหมาย เพื่อคำนวณ Z-Score และโอกาสความสำเร็จทันที</p>
+                        <h2 class="text-2xl font-bold text-slate-800">เครื่องมือคำนวณและวิเคราะห์ PERT Sandbox (อิสระ)</h2>
+                        <p class="text-sm text-slate-500">ทดลองป้อนข้อมูลโครงการใดๆ เพื่อวิเคราะห์ Z-Score และโอกาสความสำเร็จ</p>
                     </div>
                     <button onclick="addCustomActivityRow()" class="bg-sau-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-sau-700 transition-all flex items-center gap-2">
                         <i class="fa-solid fa-plus"></i> เพิ่มกิจกรรม
@@ -910,7 +815,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">หรือระบุโอกาสที่ต้องการ (%):</label>
-                        <input type="number" id="calcTargetProb" value="85" min="1" max="99" onchange="recalculateCustomPertFromProb()" class="w-full p-2.5 rounded-lg border border-slate-300 font-mono text-sm focus:ring-2 focus:ring-sau-500">
+                        <input type="number" id="calcTargetProb" value="85" min="1" max="99.9" onchange="recalculateCustomPertFromProb()" class="w-full p-2.5 rounded-lg border border-slate-300 font-mono text-sm focus:ring-2 focus:ring-sau-500">
                     </div>
                     <div class="flex items-end">
                         <button onclick="recalculateCustomPert()" class="w-full bg-navy-900 text-white py-2.5 rounded-lg font-bold hover:bg-navy-800 transition-all">
@@ -922,7 +827,7 @@
                 <!-- Output Summary Grid -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="calcOutputCards">
                     <div class="p-4 bg-slate-900 text-white rounded-xl">
-                        <div class="text-xs text-slate-400">เวลาวิกฤต ($T_e$ รวม):</div>
+                        <div class="text-xs text-slate-400">เวลารวม ($T_e$ รวม):</div>
                         <div class="text-2xl font-bold font-mono text-amber-400" id="outTe">0.00</div>
                     </div>
                     <div class="p-4 bg-slate-900 text-white rounded-xl">
@@ -941,7 +846,7 @@
 
                 <!-- Dynamic Normal Curve Chart for Custom Inputs -->
                 <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                    <h4 class="text-sm font-bold text-slate-800 mb-2">กราฟโอกาสความสำเร็จตามค่า Z-Score ที่คำนวณ</h4>
+                    <h4 class="text-sm font-bold text-slate-800 mb-2">กราฟโอกาสความสำเร็จตามค่า Z-Score</h4>
                     <div class="h-64 relative">
                         <canvas id="customCalcChart"></canvas>
                     </div>
@@ -961,19 +866,6 @@
 
     <!-- JavaScript Application Logic -->
     <script>
-        // --- Render Math Formulas via KaTeX ---
-        function renderMath() {
-            if (window.renderMathInElement) {
-                renderMathInElement(document.body, {
-                    delimiters: [
-                        {left: '$$', right: '$$', display: true},
-                        {left: '$', right: '$', display: false}
-                    ],
-                    throwOnError: false
-                });
-            }
-        }
-
         // --- Tab Switching Logic ---
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -987,13 +879,13 @@
             activeBtn.classList.add('bg-sau-600', 'text-white', 'shadow-md');
             activeBtn.classList.remove('text-slate-300');
 
-            // Trigger chart redraws and math render
             renderMath();
             if(tabId === 'theory' && normalCurveChart) normalCurveChart.update();
+            if(tabId === 'homework') updateHwEngine();
             if(tabId === 'calculator' && customChart) customChart.update();
         }
 
-        // --- Standard Normal Distribution Math Helper ---
+        // --- Standard Normal Distribution Math Helpers ---
         function erf(x) {
             const a1 =  0.254829592;
             const a2 = -0.284496736;
@@ -1023,6 +915,493 @@
             let c0 = 2.515517, c1 = 0.802853, c2 = 0.010328;
             let d1 = 1.432788, d2 = 0.189269, d3 = 0.001308;
             return t - ((c2 * t + c1) * t + c0) / (((d3 * t + d2) * t + d1) * t + 1);
+        }
+
+        // --- Full PERT / CPM Solver Algorithm Engine ---
+        function solveCPM(activities) {
+            // Build map of activities
+            const actMap = {};
+            activities.forEach(act => {
+                const a = parseFloat(act.a) || 0;
+                const m = parseFloat(act.m) || 0;
+                const b = parseFloat(act.b) || 0;
+                const te = (a + 4 * m + b) / 6;
+                const sigma = (b - a) / 6;
+                const variance = Math.pow(sigma, 2);
+                
+                const preds = act.pred ? act.pred.split(',').map(s => s.trim()).filter(s => s.length > 0) : [];
+
+                actMap[act.id] = {
+                    id: act.id,
+                    preds: preds,
+                    succs: [],
+                    a, m, b,
+                    te,
+                    sigma,
+                    variance,
+                    es: 0,
+                    ef: 0,
+                    ls: 0,
+                    lf: 0,
+                    slack: 0,
+                    isCritical: false
+                };
+            });
+
+            // Populate successors
+            Object.values(actMap).forEach(act => {
+                act.preds.forEach(pId => {
+                    if (actMap[pId]) {
+                        actMap[pId].succs.push(act.id);
+                    }
+                });
+            });
+
+            // Forward Pass
+            // Topological order determination
+            const keys = Object.keys(actMap);
+            let visited = new Set();
+            let order = [];
+
+            function visit(id) {
+                if (visited.has(id)) return;
+                const act = actMap[id];
+                if (!act) return;
+                act.preds.forEach(p => visit(p));
+                visited.add(id);
+                order.push(id);
+            }
+
+            keys.forEach(k => visit(k));
+
+            // Compute ES & EF
+            order.forEach(id => {
+                const act = actMap[id];
+                if (act.preds.length === 0) {
+                    act.es = 0;
+                } else {
+                    let maxEF = 0;
+                    act.preds.forEach(pId => {
+                        if (actMap[pId] && actMap[pId].ef > maxEF) {
+                            maxEF = actMap[pId].ef;
+                        }
+                    });
+                    act.es = maxEF;
+                }
+                act.ef = act.es + act.te;
+            });
+
+            // Find max project completion time
+            let projectDuration = 0;
+            Object.values(actMap).forEach(act => {
+                if (act.ef > projectDuration) {
+                    projectDuration = act.ef;
+                }
+            });
+
+            // Backward Pass
+            // Process in reverse topological order
+            const reverseOrder = [...order].reverse();
+            reverseOrder.forEach(id => {
+                const act = actMap[id];
+                if (act.succs.length === 0) {
+                    act.lf = projectDuration;
+                } else {
+                    let minLS = Infinity;
+                    act.succs.forEach(sId => {
+                        if (actMap[sId] && actMap[sId].ls < minLS) {
+                            minLS = actMap[sId].ls;
+                        }
+                    });
+                    act.lf = minLS;
+                }
+                act.ls = act.lf - act.te;
+                act.slack = act.lf - act.ef;
+                if (Math.abs(act.slack) < 0.001) {
+                    act.isCritical = true;
+                }
+            });
+
+            // Identify Critical Paths
+            const criticalPathList = [];
+            Object.values(actMap).forEach(act => {
+                if(act.isCritical) criticalPathList.push(act.id);
+            });
+
+            // Calculate Project Variance (sum of critical activities variances)
+            let projectVariance = 0;
+            Object.values(actMap).forEach(act => {
+                if (act.isCritical) {
+                    projectVariance += act.variance;
+                }
+            });
+
+            const projectSigma = Math.sqrt(projectVariance);
+
+            return {
+                actMap,
+                order,
+                projectDuration,
+                projectVariance,
+                projectSigma,
+                criticalPathList
+            };
+        }
+
+        // --- Homework 13 Default State ---
+        let hwActivities = [
+            { id: 'A', pred: '', a: 1, m: 3, b: 4 },
+            { id: 'B', pred: '', a: 3, m: 4, b: 7 },
+            { id: 'C', pred: 'A', a: 2, m: 3, b: 6 },
+            { id: 'D', pred: 'A, C', a: 1, m: 2, b: 4 },
+            { id: 'E', pred: 'B, C', a: 2, m: 4, b: 8 },
+            { id: 'F', pred: 'D', a: 1, m: 3, b: 6 },
+            { id: 'G', pred: 'E', a: 2, m: 6, b: 11 },
+            { id: 'H', pred: 'F, G', a: 2, m: 3, b: 7 }
+        ];
+
+        function renderHwInputTable() {
+            const tbody = document.getElementById('hwInputTbody');
+            tbody.innerHTML = '';
+            hwActivities.forEach((act, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 font-mono';
+                tr.innerHTML = `
+                    <td class="p-2 border"><input type="text" value="${act.id}" onchange="updateHwAct(${idx}, 'id', this.value)" class="w-16 text-center p-1 rounded border font-bold"></td>
+                    <td class="p-2 border"><input type="text" value="${act.pred}" onchange="updateHwAct(${idx}, 'pred', this.value)" class="w-24 text-center p-1 rounded border"></td>
+                    <td class="p-2 border bg-emerald-50/50"><input type="number" value="${act.a}" step="0.5" onchange="updateHwAct(${idx}, 'a', parseFloat(this.value))" class="w-16 text-center p-1 rounded border font-bold text-emerald-800"></td>
+                    <td class="p-2 border bg-amber-50/50"><input type="number" value="${act.m}" step="0.5" onchange="updateHwAct(${idx}, 'm', parseFloat(this.value))" class="w-16 text-center p-1 rounded border font-bold text-amber-800"></td>
+                    <td class="p-2 border bg-rose-50/50"><input type="number" value="${act.b}" step="0.5" onchange="updateHwAct(${idx}, 'b', parseFloat(this.value))" class="w-16 text-center p-1 rounded border font-bold text-rose-800"></td>
+                    <td class="p-2 border no-print"><button onclick="removeHwAct(${idx})" class="text-rose-600 hover:text-rose-800 p-1"><i class="fa-solid fa-trash"></i></button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function updateHwAct(index, field, value) {
+            hwActivities[index][field] = value;
+            updateHwEngine();
+        }
+
+        function addHwRow() {
+            const nextChar = String.fromCharCode(65 + hwActivities.length);
+            hwActivities.push({ id: nextChar, pred: '', a: 2, m: 3, b: 5 });
+            renderHwInputTable();
+            updateHwEngine();
+        }
+
+        function removeHwAct(index) {
+            hwActivities.splice(index, 1);
+            renderHwInputTable();
+            updateHwEngine();
+        }
+
+        function resetHwTable() {
+            hwActivities = [
+                { id: 'A', pred: '', a: 1, m: 3, b: 4 },
+                { id: 'B', pred: '', a: 3, m: 4, b: 7 },
+                { id: 'C', pred: 'A', a: 2, m: 3, b: 6 },
+                { id: 'D', pred: 'A, C', a: 1, m: 2, b: 4 },
+                { id: 'E', pred: 'B, C', a: 2, m: 4, b: 8 },
+                { id: 'F', pred: 'D', a: 1, m: 3, b: 6 },
+                { id: 'G', pred: 'E', a: 2, m: 6, b: 11 },
+                { id: 'H', pred: 'F, G', a: 2, m: 3, b: 7 }
+            ];
+            document.getElementById('hwTargetProbInput').value = "85";
+            renderHwInputTable();
+            updateHwEngine();
+        }
+
+        let hwNormalChartInstance = null;
+        let currentHwResult = null;
+
+        function updateHwEngine() {
+            const solution = solveCPM(hwActivities);
+            currentHwResult = solution;
+            const actMap = solution.actMap;
+
+            // Render Computed Output Table
+            const tbody = document.getElementById('hwOutputTbody');
+            tbody.innerHTML = '';
+
+            solution.order.forEach(id => {
+                const act = actMap[id];
+                const tr = document.createElement('tr');
+                const isCrit = act.isCritical;
+                tr.className = isCrit ? 'bg-rose-50/70 font-semibold' : 'hover:bg-slate-50';
+                
+                tr.innerHTML = `
+                    <td class="p-2.5 border font-sans font-bold">${act.id}</td>
+                    <td class="p-2.5 border text-blue-600 font-bold bg-blue-50/30">${act.te.toFixed(2)}</td>
+                    <td class="p-2.5 border">${act.es.toFixed(2)}</td>
+                    <td class="p-2.5 border">${act.ef.toFixed(2)}</td>
+                    <td class="p-2.5 border">${act.ls.toFixed(2)}</td>
+                    <td class="p-2.5 border">${act.lf.toFixed(2)}</td>
+                    <td class="p-2.5 border ${isCrit ? 'text-rose-600 font-bold' : 'text-emerald-600'}">${act.slack.toFixed(2)}</td>
+                    <td class="p-2.5 border">${act.sigma.toFixed(2)}</td>
+                    <td class="p-2.5 border bg-amber-50 font-bold">${act.variance.toFixed(3)}</td>
+                    <td class="p-2.5 border">${isCrit ? '<span class="bg-rose-600 text-white px-2 py-0.5 rounded text-xs font-sans">CRITICAL</span>' : '<span class="text-slate-400 font-sans">No</span>'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Update Summary Card B
+            const critPathStr = solution.criticalPathList.join(' → ');
+            document.getElementById('hwResPath').innerText = critPathStr || 'None';
+            const varSumStr = solution.criticalPathList.map(id => actMap[id].variance.toFixed(3)).join(' + ');
+            document.getElementById('hwResVarSum').innerHTML = `${varSumStr} = <b class="text-sau-700 text-sm">${solution.projectVariance.toFixed(3)}</b>`;
+
+            // Update Summary Card C (Math LaTeX Expressions)
+            document.getElementById('hwResVarEquation').innerHTML = `$$\\sum V = ${varSumStr} = ${solution.projectVariance.toFixed(3)}$$`;
+            document.getElementById('hwResSigmaBox').innerHTML = `$$\\sigma_{Te} = \\sqrt{\\sum V} = \\mathbf{${solution.projectSigma.toFixed(3)}}$$`;
+
+            // Update Probability Calculations in Card D
+            calculateHwTargetTsFromProb();
+
+            // Render Dynamic SVG Network Diagram
+            renderDynamicHwSvg(solution);
+
+            // Render Math equations
+            renderMath();
+        }
+
+        function calculateHwTargetTsFromProb() {
+            if(!currentHwResult) return;
+            const probInput = parseFloat(document.getElementById('hwTargetProbInput').value) || 85;
+            const p = probInput / 100;
+            const z = invCDFNormal(p);
+            
+            const te = currentHwResult.projectDuration;
+            const sigma = currentHwResult.projectSigma;
+
+            const ts = te + (z * sigma);
+            document.getElementById('hwResTargetTs').innerText = ts.toFixed(2);
+
+            // Sync with secondary input
+            document.getElementById('hwTargetTsInput').value = ts.toFixed(2);
+            document.getElementById('hwResCalculatedProb').innerText = probInput.toFixed(2) + '%';
+            document.getElementById('hwResCalculatedZ').innerText = z.toFixed(2);
+
+            renderHwNormalChart(z);
+        }
+
+        function calculateHwProbFromTargetTs() {
+            if(!currentHwResult) return;
+            const tsInput = parseFloat(document.getElementById('hwTargetTsInput').value) || currentHwResult.projectDuration;
+            const te = currentHwResult.projectDuration;
+            const sigma = currentHwResult.projectSigma;
+
+            const z = (tsInput - te) / sigma;
+            const prob = cdfNormal(z) * 100;
+
+            document.getElementById('hwResCalculatedProb').innerText = prob.toFixed(2) + '%';
+            document.getElementById('hwResCalculatedZ').innerText = z.toFixed(2);
+
+            renderHwNormalChart(z);
+        }
+
+        function renderHwNormalChart(targetZ) {
+            const ctx = document.getElementById('hwNormalChart').getContext('2d');
+            const labels = [];
+            const dataPoints = [];
+            const bgColors = [];
+
+            for (let z = -3.5; z <= 3.5; z += 0.1) {
+                labels.push(z.toFixed(1));
+                const y = (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * z * z);
+                dataPoints.push(y);
+                bgColors.push(z <= targetZ ? 'rgba(220, 38, 38, 0.45)' : 'rgba(203, 213, 225, 0.3)');
+            }
+
+            if (hwNormalChartInstance) hwNormalChartInstance.destroy();
+
+            hwNormalChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Normal Probability Area',
+                        data: dataPoints,
+                        backgroundColor: bgColors,
+                        barPercentage: 1.0,
+                        categoryPercentage: 1.0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { title: { display: true, text: 'Z-Score (Standard Deviations)', color: '#475569' } },
+                        y: { display: false }
+                    }
+                }
+            });
+        }
+
+        function renderDynamicHwSvg(solution) {
+            const container = document.getElementById('hwDynamicSvgContainer');
+            if(!container) return;
+
+            const actMap = solution.actMap;
+            const keys = solution.order;
+
+            // Simple topological layer layout engine for SVG nodes
+            const layers = {};
+            const nodePos = {};
+
+            // Calculate node depth
+            function getDepth(id) {
+                const act = actMap[id];
+                if (!act || act.preds.length === 0) return 0;
+                let maxP = 0;
+                act.preds.forEach(p => {
+                    maxP = Math.max(maxP, getDepth(p) + 1);
+                });
+                return maxP;
+            }
+
+            let maxDepth = 0;
+            keys.forEach(id => {
+                const d = getDepth(id);
+                maxDepth = Math.max(maxDepth, d);
+                if (!layers[d]) layers[d] = [];
+                layers[d].push(id);
+            });
+
+            // Layout coordinates
+            const width = 750;
+            const height = 320;
+            const paddingX = 80;
+            const depthCount = maxDepth + 1;
+            const stepX = (width - 2 * paddingX) / Math.max(1, depthCount - 1);
+
+            Object.keys(layers).forEach(d => {
+                const depthNum = parseInt(d);
+                const nodesInLayer = layers[d];
+                const x = paddingX + depthNum * stepX;
+                const stepY = height / (nodesInLayer.length + 1);
+                
+                nodesInLayer.forEach((id, idx) => {
+                    const y = stepY * (idx + 1);
+                    nodePos[id] = { x, y };
+                });
+            });
+
+            // Build SVG Connections & Nodes
+            let linesSvg = '';
+            let nodesSvg = '';
+
+            // Draw Lines
+            keys.forEach(id => {
+                const act = actMap[id];
+                const target = nodePos[id];
+
+                act.preds.forEach(pId => {
+                    const source = nodePos[pId];
+                    if (source && target) {
+                        const isBothCritical = act.isCritical && actMap[pId].isCritical && Math.abs(actMap[pId].ef - act.es) < 0.001;
+                        const strokeColor = isBothCritical ? '#ef4444' : '#64748b';
+                        const strokeWidth = isBothCritical ? '3' : '2';
+                        const markerEnd = isBothCritical ? 'url(#hw-dyn-arrow-red)' : 'url(#hw-dyn-arrow-gray)';
+
+                        linesSvg += `<line x1="${source.x}" y1="${source.y}" x2="${target.x}" y2="${target.y}" stroke="${strokeColor}" stroke-width="${strokeWidth}" marker-end="${markerEnd}"/>`;
+                    }
+                });
+            });
+
+            // Draw Nodes
+            keys.forEach(id => {
+                const pos = nodePos[id];
+                const act = actMap[id];
+                const isCrit = act.isCritical;
+                const circleStroke = isCrit ? '#ef4444' : '#64748b';
+                const circleWidth = isCrit ? '3' : '2';
+                const labelColor = isCrit ? '#f87171' : '#cbd5e1';
+
+                nodesSvg += `
+                    <g transform="translate(${pos.x}, ${pos.y})">
+                        <circle r="24" fill="#0f172a" stroke="${circleStroke}" stroke-width="${circleWidth}"/>
+                        <text text-anchor="middle" dy="-3" fill="#ffffff" font-size="12" font-weight="bold">${act.id}</text>
+                        <text text-anchor="middle" dy="11" fill="${labelColor}" font-size="9">${act.te.toFixed(1)}w</text>
+                    </g>
+                `;
+            });
+
+            const fullSvg = `
+                <svg width="100%" height="100%" viewBox="0 0 750 320" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <marker id="hw-dyn-arrow-red" viewBox="0 0 10 10" refX="24" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444" />
+                        </marker>
+                        <marker id="hw-dyn-arrow-gray" viewBox="0 0 10 10" refX="24" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b" />
+                        </marker>
+                    </defs>
+                    ${linesSvg}
+                    ${nodesSvg}
+                </svg>
+            `;
+
+            container.innerHTML = fullSvg;
+        }
+
+        // --- Render SVG Network Diagram for Example 3 ---
+        function renderEx3Svg() {
+            const container = document.getElementById('ex3SvgContainer');
+            if(!container) return;
+
+            const svgHtml = `
+            <svg width="100%" height="100%" viewBox="0 0 750 300" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <marker id="arrow" viewBox="0 0 10 10" refX="22" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8" />
+                    </marker>
+                    <marker id="arrow-red" viewBox="0 0 10 10" refX="22" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444" />
+                    </marker>
+                </defs>
+
+                <line x1="60" y1="150" x2="160" y2="70" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow-red)"/>
+                <text x="95" y="100" fill="#f87171" font-size="11" font-weight="bold">สั่งเสาเข็ม (6)</text>
+
+                <line x1="60" y1="150" x2="160" y2="150" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow)"/>
+                <text x="95" y="142" fill="#fbbf24" font-size="11">วางผัง (6)</text>
+
+                <line x1="60" y1="150" x2="160" y2="230" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+                <text x="90" y="205" fill="#94a3b8" font-size="11">สั่งเหล็กเส้น (1.17)</text>
+
+                <line x1="160" y1="70" x2="300" y2="150" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow-red)"/>
+                <line x1="160" y1="150" x2="300" y2="150" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+                <line x1="160" y1="230" x2="300" y2="230" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+                <text x="210" y="222" fill="#94a3b8" font-size="11">ผูกเหล็ก (5.5)</text>
+
+                <line x1="300" y1="150" x2="450" y2="150" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow-red)"/>
+                <text x="345" y="142" fill="#f87171" font-size="11" font-weight="bold">ตอกเสาเข็ม (24.5)</text>
+
+                <line x1="300" y1="150" x2="450" y2="70" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+                <text x="340" y="98" fill="#94a3b8" font-size="11">สั่งคอนกรีต (2.33)</text>
+
+                <line x1="450" y1="70" x2="580" y2="150" stroke="#64748b" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrow)"/>
+                <line x1="450" y1="150" x2="580" y2="150" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow-red)"/>
+                <text x="495" y="142" fill="#f87171" font-size="11" font-weight="bold">ขุดหลุม (11.83)</text>
+
+                <line x1="580" y1="150" x2="700" y2="150" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow-red)"/>
+                <text x="615" y="142" fill="#f87171" font-size="11" font-weight="bold">เทฐานราก (3.5)</text>
+
+                <!-- Nodes -->
+                <g transform="translate(60, 150)"><circle r="22" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/><text text-anchor="middle" dy="4" fill="#ffffff" font-size="11" font-weight="bold">เริ่มงาน</text></g>
+                <g transform="translate(160, 70)"><circle r="22" fill="#0f172a" stroke="#ef4444" stroke-width="3"/><text text-anchor="middle" dy="-3" fill="#ffffff" font-size="10">สั่งเสาเข็ม</text><text text-anchor="middle" dy="10" fill="#f87171" font-size="9" font-weight="bold">6.0d</text></g>
+                <g transform="translate(160, 150)"><circle r="22" fill="#0f172a" stroke="#f59e0b" stroke-width="2"/><text text-anchor="middle" dy="-3" fill="#ffffff" font-size="10">วางผัง</text><text text-anchor="middle" dy="10" fill="#fbbf24" font-size="9">6.0d</text></g>
+                <g transform="translate(160, 230)"><circle r="22" fill="#0f172a" stroke="#64748b" stroke-width="2"/><text text-anchor="middle" dy="-3" fill="#ffffff" font-size="9">สั่งเหล็ก</text><text text-anchor="middle" dy="10" fill="#cbd5e1" font-size="9">1.17d</text></g>
+                <g transform="translate(300, 150)"><circle r="22" fill="#0f172a" stroke="#ef4444" stroke-width="3"/><text text-anchor="middle" dy="-3" fill="#ffffff" font-size="10">ตอกเสาเข็ม</text><text text-anchor="middle" dy="10" fill="#f87171" font-size="9" font-weight="bold">24.5d</text></g>
+                <g transform="translate(450, 70)"><circle r="22" fill="#0f172a" stroke="#64748b" stroke-width="2"/><text text-anchor="middle" dy="-3" fill="#ffffff" font-size="9">สั่งคอนกรีต</text><text text-anchor="middle" dy="10" fill="#cbd5e1" font-size="9">2.33d</text></g>
+                <g transform="translate(300, 230)"><circle r="22" fill="#0f172a" stroke="#64748b" stroke-width="2"/><text text-anchor="middle" dy="-3" fill="#ffffff" font-size="9">ผูกเหล็ก</text><text text-anchor="middle" dy="10" fill="#cbd5e1" font-size="9">5.5d</text></g>
+                <g transform="translate(580, 150)"><circle r="22" fill="#0f172a" stroke="#ef4444" stroke-width="3"/><text text-anchor="middle" dy="-3" fill="#ffffff" font-size="10">ขุดหลุม</text><text text-anchor="middle" dy="10" fill="#f87171" font-size="9" font-weight="bold">11.83d</text></g>
+                <g transform="translate(700, 150)"><circle r="22" fill="#ef4444" stroke="#ffffff" stroke-width="2"/><text text-anchor="middle" dy="-3" fill="#ffffff" font-size="10" font-weight="bold">เทฐานราก</text><text text-anchor="middle" dy="10" fill="#ffffff" font-size="9" font-weight="bold">3.5d</text></g>
+            </svg>`;
+            container.innerHTML = svgHtml;
         }
 
         // --- Render Normal Curve Chart in Theory Section ---
@@ -1070,158 +1449,6 @@
             });
         }
 
-        // --- Render SVG Network Diagram for Example 3 ---
-        function renderEx3Svg() {
-            const container = document.getElementById('ex3SvgContainer');
-            if(!container) return;
-
-            const svgHtml = `
-            <svg width="100%" height="100%" viewBox="0 0 750 300" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <marker id="arrow" viewBox="0 0 10 10" refX="22" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8" />
-                    </marker>
-                    <marker id="arrow-red" viewBox="0 0 10 10" refX="22" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444" />
-                    </marker>
-                </defs>
-
-                <!-- Connection Lines -->
-                <line x1="60" y1="150" x2="160" y2="70" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow-red)"/>
-                <text x="95" y="100" fill="#f87171" font-size="11" font-weight="bold">สั่งเสาเข็ม (6)</text>
-
-                <line x1="60" y1="150" x2="160" y2="150" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow)"/>
-                <text x="95" y="142" fill="#fbbf24" font-size="11">วางผัง (6)</text>
-
-                <line x1="60" y1="150" x2="160" y2="230" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
-                <text x="90" y="205" fill="#94a3b8" font-size="11">สั่งเหล็กเส้น (1.17)</text>
-
-                <line x1="160" y1="70" x2="300" y2="150" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow-red)"/>
-                <line x1="160" y1="150" x2="300" y2="150" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
-
-                <line x1="160" y1="230" x2="300" y2="230" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
-                <text x="210" y="222" fill="#94a3b8" font-size="11">ผูกเหล็ก (5.5)</text>
-
-                <line x1="300" y1="150" x2="450" y2="150" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow-red)"/>
-                <text x="345" y="142" fill="#f87171" font-size="11" font-weight="bold">ตอกเสาเข็ม (24.5)</text>
-
-                <line x1="300" y1="150" x2="450" y2="70" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
-                <text x="340" y="98" fill="#94a3b8" font-size="11">สั่งคอนกรีต (2.33)</text>
-
-                <line x1="450" y1="70" x2="580" y2="150" stroke="#64748b" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrow)"/>
-                <line x1="450" y1="150" x2="580" y2="150" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow-red)"/>
-                <text x="495" y="142" fill="#f87171" font-size="11" font-weight="bold">ขุดหลุม (11.83)</text>
-                <line x1="300" y1="230" x2="580" y2="150" stroke="#64748b" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrow)"/>
-
-                <line x1="580" y1="150" x2="700" y2="150" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow-red)"/>
-                <text x="615" y="142" fill="#f87171" font-size="11" font-weight="bold">เทฐานราก (3.5)</text>
-
-                <!-- Nodes -->
-                <g transform="translate(60, 150)">
-                    <circle r="22" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
-                    <text text-anchor="middle" dy="4" fill="#ffffff" font-size="11" font-weight="bold">เริ่มงาน</text>
-                </g>
-                <g transform="translate(160, 70)">
-                    <circle r="22" fill="#0f172a" stroke="#ef4444" stroke-width="3"/>
-                    <text text-anchor="middle" dy="-3" fill="#ffffff" font-size="10">สั่งเสาเข็ม</text>
-                    <text text-anchor="middle" dy="10" fill="#f87171" font-size="9" font-weight="bold">6.0d</text>
-                </g>
-                <g transform="translate(160, 150)">
-                    <circle r="22" fill="#0f172a" stroke="#f59e0b" stroke-width="2"/>
-                    <text text-anchor="middle" dy="-3" fill="#ffffff" font-size="10">วางผัง</text>
-                    <text text-anchor="middle" dy="10" fill="#fbbf24" font-size="9">6.0d</text>
-                </g>
-                <g transform="translate(160, 230)">
-                    <circle r="22" fill="#0f172a" stroke="#64748b" stroke-width="2"/>
-                    <text text-anchor="middle" dy="-3" fill="#ffffff" font-size="9">สั่งเหล็ก</text>
-                    <text text-anchor="middle" dy="10" fill="#cbd5e1" font-size="9">1.17d</text>
-                </g>
-                <g transform="translate(300, 150)">
-                    <circle r="22" fill="#0f172a" stroke="#ef4444" stroke-width="3"/>
-                    <text text-anchor="middle" dy="-3" fill="#ffffff" font-size="10">ตอกเสาเข็ม</text>
-                    <text text-anchor="middle" dy="10" fill="#f87171" font-size="9" font-weight="bold">24.5d</text>
-                </g>
-                <g transform="translate(450, 70)">
-                    <circle r="22" fill="#0f172a" stroke="#64748b" stroke-width="2"/>
-                    <text text-anchor="middle" dy="-3" fill="#ffffff" font-size="9">สั่งคอนกรีต</text>
-                    <text text-anchor="middle" dy="10" fill="#cbd5e1" font-size="9">2.33d</text>
-                </g>
-                <g transform="translate(300, 230)">
-                    <circle r="22" fill="#0f172a" stroke="#64748b" stroke-width="2"/>
-                    <text text-anchor="middle" dy="-3" fill="#ffffff" font-size="9">ผูกเหล็ก</text>
-                    <text text-anchor="middle" dy="10" fill="#cbd5e1" font-size="9">5.5d</text>
-                </g>
-                <g transform="translate(580, 150)">
-                    <circle r="22" fill="#0f172a" stroke="#ef4444" stroke-width="3"/>
-                    <text text-anchor="middle" dy="-3" fill="#ffffff" font-size="10">ขุดหลุม</text>
-                    <text text-anchor="middle" dy="10" fill="#f87171" font-size="9" font-weight="bold">11.83d</text>
-                </g>
-                <g transform="translate(700, 150)">
-                    <circle r="22" fill="#ef4444" stroke="#ffffff" stroke-width="2"/>
-                    <text text-anchor="middle" dy="-3" fill="#ffffff" font-size="10" font-weight="bold">เทฐานราก</text>
-                    <text text-anchor="middle" dy="10" fill="#ffffff" font-size="9" font-weight="bold">3.5d</text>
-                </g>
-            </svg>`;
-            container.innerHTML = svgHtml;
-        }
-
-        // --- Render SVG Network Diagram for Homework No. 13 ---
-        function renderHwSvg() {
-            const container = document.getElementById('hwSvgContainer');
-            if(!container) return;
-
-            const svgHtml = `
-            <svg width="100%" height="100%" viewBox="0 0 800 320" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <marker id="hw-arrow-red" viewBox="0 0 10 10" refX="22" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444" />
-                    </marker>
-                    <marker id="hw-arrow-gray" viewBox="0 0 10 10" refX="22" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b" />
-                    </marker>
-                </defs>
-
-                <line x1="50" y1="160" x2="160" y2="100" stroke="#ef4444" stroke-width="3" marker-end="url(#hw-arrow-red)"/>
-                <text x="95" y="120" fill="#f87171" font-size="11" font-weight="bold">A (Te=2.83)</text>
-
-                <line x1="50" y1="160" x2="160" y2="240" stroke="#64748b" stroke-width="2" marker-end="url(#hw-arrow-gray)"/>
-                <text x="95" y="215" fill="#94a3b8" font-size="11">B (Te=4.33)</text>
-
-                <line x1="160" y1="100" x2="280" y2="100" stroke="#ef4444" stroke-width="3" marker-end="url(#hw-arrow-red)"/>
-                <text x="210" y="90" fill="#f87171" font-size="11" font-weight="bold">C (Te=3.33)</text>
-
-                <line x1="280" y1="100" x2="420" y2="70" stroke="#64748b" stroke-width="2" marker-end="url(#hw-arrow-gray)"/>
-                <text x="340" y="75" fill="#94a3b8" font-size="11">D (Te=2.17)</text>
-
-                <line x1="280" y1="100" x2="420" y2="160" stroke="#ef4444" stroke-width="3" marker-end="url(#hw-arrow-red)"/>
-                <text x="340" y="145" fill="#f87171" font-size="11" font-weight="bold">E (Te=4.33)</text>
-
-                <line x1="160" y1="240" x2="420" y2="160" stroke="#64748b" stroke-width="2" marker-end="url(#hw-arrow-gray)"/>
-
-                <line x1="420" y1="70" x2="560" y2="70" stroke="#64748b" stroke-width="2" marker-end="url(#hw-arrow-gray)"/>
-                <text x="480" y="60" fill="#94a3b8" font-size="11">F (Te=3.17)</text>
-
-                <line x1="420" y1="160" x2="560" y2="160" stroke="#ef4444" stroke-width="3" marker-end="url(#hw-arrow-red)"/>
-                <text x="480" y="150" fill="#f87171" font-size="11" font-weight="bold">G (Te=6.17)</text>
-
-                <line x1="560" y1="70" x2="700" y2="160" stroke="#64748b" stroke-width="2" marker-end="url(#hw-arrow-gray)"/>
-                <line x1="560" y1="160" x2="700" y2="160" stroke="#ef4444" stroke-width="3" marker-end="url(#hw-arrow-red)"/>
-                <text x="620" y="150" fill="#f87171" font-size="11" font-weight="bold">H (Te=3.50)</text>
-
-                <!-- Nodes -->
-                <g transform="translate(50, 160)"><circle r="20" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/><text text-anchor="middle" dy="4" fill="#ffffff" font-size="10" font-weight="bold">Start</text></g>
-                <g transform="translate(160, 100)"><circle r="22" fill="#0f172a" stroke="#ef4444" stroke-width="3"/><text text-anchor="middle" dy="4" fill="#ffffff" font-size="12" font-weight="bold">A</text></g>
-                <g transform="translate(160, 240)"><circle r="22" fill="#0f172a" stroke="#64748b" stroke-width="2"/><text text-anchor="middle" dy="4" fill="#ffffff" font-size="12" font-weight="bold">B</text></g>
-                <g transform="translate(280, 100)"><circle r="22" fill="#0f172a" stroke="#ef4444" stroke-width="3"/><text text-anchor="middle" dy="4" fill="#ffffff" font-size="12" font-weight="bold">C</text></g>
-                <g transform="translate(420, 70)"><circle r="22" fill="#0f172a" stroke="#64748b" stroke-width="2"/><text text-anchor="middle" dy="4" fill="#ffffff" font-size="12" font-weight="bold">D</text></g>
-                <g transform="translate(420, 160)"><circle r="22" fill="#0f172a" stroke="#ef4444" stroke-width="3"/><text text-anchor="middle" dy="4" fill="#ffffff" font-size="12" font-weight="bold">E</text></g>
-                <g transform="translate(560, 70)"><circle r="22" fill="#0f172a" stroke="#64748b" stroke-width="2"/><text text-anchor="middle" dy="4" fill="#ffffff" font-size="12" font-weight="bold">F</text></g>
-                <g transform="translate(560, 160)"><circle r="22" fill="#0f172a" stroke="#ef4444" stroke-width="3"/><text text-anchor="middle" dy="4" fill="#ffffff" font-size="12" font-weight="bold">G</text></g>
-                <g transform="translate(700, 160)"><circle r="24" fill="#ef4444" stroke="#ffffff" stroke-width="2"/><text text-anchor="middle" dy="4" fill="#ffffff" font-size="13" font-weight="bold">H (End)</text></g>
-            </svg>`;
-            container.innerHTML = svgHtml;
-        }
-
         // --- Interactive PERT Sandbox Calculator Logic ---
         let customActivities = [
             { id: 'A', pred: '', a: 1, m: 3, b: 4 },
@@ -1246,7 +1473,7 @@
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-slate-50 font-mono';
                 tr.innerHTML = `
-                    <td class="p-2 border"><input type="text" value="${act.id}" onchange="updateCustomAct(${idx}, 'id', this.value)" class="w-12 text-center p-1 rounded border"></td>
+                    <td class="p-2 border"><input type="text" value="${act.id}" onchange="updateCustomAct(${idx}, 'id', this.value)" class="w-12 text-center p-1 rounded border font-bold"></td>
                     <td class="p-2 border"><input type="text" value="${act.pred}" onchange="updateCustomAct(${idx}, 'pred', this.value)" class="w-20 text-center p-1 rounded border"></td>
                     <td class="p-2 border"><input type="number" value="${act.a}" step="0.5" onchange="updateCustomAct(${idx}, 'a', parseFloat(this.value))" class="w-16 text-center p-1 rounded border"></td>
                     <td class="p-2 border"><input type="number" value="${act.m}" step="0.5" onchange="updateCustomAct(${idx}, 'm', parseFloat(this.value))" class="w-16 text-center p-1 rounded border"></td>
@@ -1280,25 +1507,10 @@
         let customChart = null;
 
         function recalculateCustomPert() {
-            let teTotal = 20.167;
-            let varTotal = 4.639;
+            const solution = solveCPM(customActivities);
 
-            const actMap = {};
-            customActivities.forEach(act => {
-                const te = (act.a + 4 * act.m + act.b) / 6;
-                const v = Math.pow((act.b - act.a) / 6, 2);
-                actMap[act.id] = { te, v };
-            });
-
-            if (actMap['A'] && actMap['C'] && actMap['E'] && actMap['G'] && actMap['H']) {
-                teTotal = actMap['A'].te + actMap['C'].te + actMap['E'].te + actMap['G'].te + actMap['H'].te;
-                varTotal = actMap['A'].v + actMap['C'].v + actMap['E'].v + actMap['G'].v + actMap['H'].v;
-            } else {
-                teTotal = customActivities.reduce((acc, curr) => acc + (curr.a + 4*curr.m + curr.b)/6, 0);
-                varTotal = customActivities.reduce((acc, curr) => acc + Math.pow((curr.b - curr.a)/6, 2), 0);
-            }
-
-            const sigmaTe = Math.sqrt(varTotal);
+            const teTotal = solution.projectDuration;
+            const sigmaTe = solution.projectSigma;
             const ts = parseFloat(document.getElementById('calcTargetTs').value) || 22;
 
             const z = (ts - teTotal) / sigmaTe;
@@ -1317,16 +1529,9 @@
             const p = probPercent / 100;
             const z = invCDFNormal(p);
 
-            let actMap = {};
-            customActivities.forEach(act => {
-                const te = (act.a + 4 * act.m + act.b) / 6;
-                const v = Math.pow((act.b - act.a) / 6, 2);
-                actMap[act.id] = { te, v };
-            });
-
-            let teTotal = actMap['A'] ? (actMap['A'].te + actMap['C'].te + actMap['E'].te + actMap['G'].te + actMap['H'].te) : 20.167;
-            let varTotal = actMap['A'] ? (actMap['A'].v + actMap['C'].v + actMap['E'].v + actMap['G'].v + actMap['H'].v) : 4.639;
-            let sigmaTe = Math.sqrt(varTotal);
+            const solution = solveCPM(customActivities);
+            const teTotal = solution.projectDuration;
+            const sigmaTe = solution.projectSigma;
 
             const ts = teTotal + (z * sigmaTe);
             document.getElementById('calcTargetTs').value = ts.toFixed(2);
@@ -1344,7 +1549,7 @@
                 labels.push(z.toFixed(1));
                 const y = (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * z * z);
                 dataPoints.push(y);
-                bgColors.push(z <= targetZ ? 'rgba(239, 68, 68, 0.4)' : 'rgba(226, 232, 240, 0.3)');
+                bgColors.push(z <= targetZ ? 'rgba(239, 68, 68, 0.45)' : 'rgba(226, 232, 240, 0.3)');
             }
 
             if (customChart) customChart.destroy();
@@ -1364,9 +1569,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
+                    plugins: { legend: { display: false } },
                     scales: {
                         x: { title: { display: true, text: 'Z-Score' } },
                         y: { display: false }
@@ -1375,11 +1578,12 @@
             });
         }
 
-        // --- Initialization on Load ---
+        // --- Application Onload Entry Point ---
         window.onload = function () {
             initTheoryNormalCurveChart();
             renderEx3Svg();
-            renderHwSvg();
+            renderHwInputTable();
+            updateHwEngine();
             renderCalcTable();
             renderMath();
         };
